@@ -27,6 +27,10 @@ html, body {
   color: var(--text);
   overflow: hidden;
   user-select: none;
+  /* [iOS Fix10] Prevent pull-to-refresh and overscroll bounce on iOS */
+  overscroll-behavior: none;
+  /* [iOS Fix10] Smooth momentum scrolling for scroll children */
+  -webkit-overflow-scrolling: touch;
 }
 
 /* ===== SCREENS ===== */
@@ -409,6 +413,7 @@ html, body {
 }
 .battle-char:not(.char-attack-left):not(.char-attack-right) {
   animation: charFloat 3s ease-in-out infinite alternate;
+  will-change: transform; /* [iOS Fix8] GPU layer for float */
 }
 
 /* Aura wrapper — centered behind character, pointer-events off */
@@ -435,8 +440,9 @@ html, body {
   width: 100%; height: 100%;
   overflow: visible;
 }
-.star-svg-1 { animation: starSpin1 5s linear infinite; }
-.star-svg-2 { animation: starSpin2 8s linear infinite; opacity: 0.45; }
+/* [iOS Fix8] Promote to GPU layer for smooth animation on older iPhones */
+.star-svg-1 { animation: starSpin1 5s linear infinite; will-change: transform; }
+.star-svg-2 { animation: starSpin2 8s linear infinite; opacity: 0.45; will-change: transform; }
 @keyframes starSpin1 { to { transform: rotate(360deg); } }
 @keyframes starSpin2 { to { transform: rotate(-360deg); } }
 
@@ -489,18 +495,21 @@ html, body {
 .gold-ring-1 {
   width: 52%; height: 52%;
   animation: goldRingPulse 2s ease-in-out infinite;
+  will-change: transform, opacity;
 }
 .gold-ring-2 {
   width: 74%; height: 74%;
   border-width: 2px;
   border-color: rgba(212,160,23,0.5);
   animation: goldRingPulse 2s ease-in-out 0.45s infinite;
+  will-change: transform, opacity;
 }
 .gold-ring-3 {
   width: 96%; height: 96%;
   border-width: 2px;
   border-color: rgba(212,160,23,0.28);
   animation: goldRingPulse 2s ease-in-out 0.9s infinite;
+  will-change: transform, opacity;
 }
 @keyframes goldRingPulse {
   0%   { transform: translate(-50%,-50%) scale(0.93); opacity: 0.35; }
@@ -648,6 +657,31 @@ html, body {
   100% { transform: translateY(-60px) scale(1.2); opacity: 0; }
 }
 
+/* [iOS Fix7] Enemy turn indicator */
+.turn-indicator {
+  position: absolute;
+  top: 38%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(212,160,23,0.12);
+  border: 1px solid rgba(212,160,23,0.35);
+  color: var(--gold);
+  font-size: 13px;
+  letter-spacing: 0.15em;
+  padding: 5px 18px;
+  border-radius: 4px;
+  pointer-events: none;
+  white-space: nowrap;
+  z-index: 90;
+  animation: turnIndicatorAnim 1.1s ease-out forwards;
+}
+@keyframes turnIndicatorAnim {
+  0%   { opacity: 0; transform: translate(-50%, -65%); }
+  20%  { opacity: 1; transform: translate(-50%, -50%); }
+  75%  { opacity: 1; transform: translate(-50%, -50%); }
+  100% { opacity: 0; transform: translate(-50%, -38%); }
+}
+
 /* Battle message */
 .battle-message {
   position: absolute;
@@ -703,6 +737,8 @@ html, body {
   gap: 2px;
   scrollbar-width: thin;
   scrollbar-color: var(--panel-border) transparent;
+  /* [iOS Fix10] Prevent log scroll from propagating to page */
+  overscroll-behavior: contain;
 }
 .log-entry {
   padding: 2px 0;
@@ -897,6 +933,7 @@ html, body {
   max-height: 200px;
   scrollbar-width: thin;
   scrollbar-color: var(--panel-border) transparent;
+  overscroll-behavior: contain; /* [iOS Fix10] */
 }
 
 /* Skill tooltip */
@@ -958,10 +995,14 @@ html, body {
   background: none;
   border: 1px solid var(--gold);
   border-radius: 4px;
-  padding: 10px 32px;
+  /* [iOS Fix5] Minimum 44px height per Apple HIG */
+  min-height: 44px;
+  padding: 12px 40px;
   cursor: pointer;
   letter-spacing: 0.2em;
   transition: all 0.2s;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 #result-content button:hover { background: rgba(212,160,23,0.15); transform: scale(1.05); }
 
@@ -1039,6 +1080,8 @@ button:focus-visible {
     max-height: none;
     gap: 0;
     position: relative;
+    /* [iOS Fix2] Padding for home indicator / Dynamic Island */
+    padding-bottom: env(safe-area-inset-bottom, 0px);
   }
 
   /* --- Battle log: hidden by default, overlay on toggle (Fix4) --- */
@@ -1100,6 +1143,8 @@ button:focus-visible {
   .cmd-btn {
     width: 68px; height: 68px;
     touch-action: manipulation;
+    /* [iOS Fix4] Remove gray highlight on tap */
+    -webkit-tap-highlight-color: transparent;
   }
   .cmd-icon { font-size: 24px; }
   .cmd-name { font-size: 11px; }
