@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>干支タクティクス α - Eto Tactics Alpha</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- TITLE SCREEN -->
+  <div id="title-screen" class="screen active">
+    <div class="title-bg"></div>
+    <div class="title-content">
+      <div class="title-logo">
+        <span class="title-kanji">干支タクティクス</span>
+        <span class="title-sub">ETO TACTICS α</span>
+      </div>
+      <div class="title-zodiac-ring">
+        <span class="zodiac-sym" style="--i:0">子</span>
+        <span class="zodiac-sym" style="--i:1">丑</span>
+        <span class="zodiac-sym" style="--i:2">寅</span>
+        <span class="zodiac-sym" style="--i:3">卯</span>
+        <span class="zodiac-sym" style="--i:4">辰</span>
+        <span class="zodiac-sym" style="--i:5">巳</span>
+        <span class="zodiac-sym" style="--i:6">午</span>
+        <span class="zodiac-sym" style="--i:7">未</span>
+        <span class="zodiac-sym" style="--i:8">申</span>
+        <span class="zodiac-sym" style="--i:9">酉</span>
+        <span class="zodiac-sym" style="--i:10">戌</span>
+        <span class="zodiac-sym" style="--i:11">亥</span>
+      </div>
+      <button class="press-start" onclick="Game.startBattle()">— 戦闘開始 —</button>
+      <div class="title-credits">戌の勇士 vs 金の守護者</div>
+    </div>
+  </div>
+
+  <!-- BATTLE SCREEN -->
+  <div id="battle-screen" class="screen">
+
+    <!-- TOP HUD -->
+    <div id="hud-top">
+      <!-- Player HUD -->
+      <div class="hud-unit player-hud">
+        <div class="hud-portrait">
+          <img src="assets/characters/player.svg" alt="P1" class="portrait-img">
+        </div>
+        <div class="hud-stats">
+          <div class="hud-name-row">
+            <span class="hud-name" id="p-name">P1</span>
+            <span class="hud-lv">Lv<span id="p-lv">48</span></span>
+            <span class="element-badge fire">火</span>
+          </div>
+          <div class="bar-row">
+            <span class="bar-label">HP</span>
+            <div class="bar-bg">
+              <div class="bar-fill hp-bar" id="p-hp-bar" style="width:69%"></div>
+            </div>
+            <span class="bar-val" id="p-hp-val">312/450</span>
+          </div>
+          <div class="bar-row">
+            <span class="bar-label">PP</span>
+            <div class="bar-bg">
+              <div class="bar-fill pp-bar" id="p-pp-bar" style="width:80%"></div>
+            </div>
+            <span class="bar-val" id="p-pp-val">40/50</span>
+          </div>
+          <div class="bar-row">
+            <span class="bar-label">EXP</span>
+            <div class="bar-bg">
+              <div class="bar-fill exp-bar" id="p-exp-bar" style="width:55%"></div>
+            </div>
+          </div>
+          <div class="cp-row">
+            <span class="cp-label">CP</span>
+            <span class="cp-val" id="p-cp-val">880</span>
+            <span class="dan-label">段：<span id="p-dan">3</span></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- TURN TIMELINE -->
+      <div id="turn-timeline">
+        <div class="timeline-label">ターン</div>
+        <div id="timeline-track">
+          <!-- Filled by JS -->
+        </div>
+      </div>
+
+      <!-- Enemy HUD -->
+      <div class="hud-unit enemy-hud">
+        <div class="hud-stats" style="text-align:right">
+          <div class="hud-name-row" style="justify-content:flex-end">
+            <span class="element-badge lightning">雷</span>
+            <span class="hud-lv">Lv<span id="e-lv">50</span></span>
+            <span class="hud-name" id="e-name">CP</span>
+          </div>
+          <div class="bar-row">
+            <span class="bar-val" id="e-hp-val">215/510</span>
+            <div class="bar-bg">
+              <div class="bar-fill hp-bar enemy" id="e-hp-bar" style="width:42%"></div>
+            </div>
+            <span class="bar-label">HP</span>
+          </div>
+          <div class="bar-row">
+            <span class="bar-val" id="e-pp-val">30/40</span>
+            <div class="bar-bg">
+              <div class="bar-fill pp-bar enemy" id="e-pp-bar" style="width:75%"></div>
+            </div>
+            <span class="bar-label">PP</span>
+          </div>
+          <div class="cp-row" style="justify-content:flex-end">
+            <span class="dan-label">段：<span id="e-dan">4</span></span>
+            <span class="cp-label">CP</span>
+            <span class="cp-val" id="e-cp-val">1024</span>
+          </div>
+        </div>
+        <div class="hud-portrait">
+          <img src="assets/characters/enemy.svg" alt="Enemy" class="portrait-img">
+        </div>
+      </div>
+    </div>
+
+    <!-- BATTLE FIELD -->
+    <div id="battle-field">
+      <div id="field-bg" style="background-image:url('assets/backgrounds/battle_bg.svg')"></div>
+
+      <!-- Status effects floating -->
+      <div id="p-status-effects" class="status-effects left-side"></div>
+      <div id="e-status-effects" class="status-effects right-side"></div>
+
+      <!-- Characters -->
+      <div id="player-char" class="battle-char player-char">
+        <img src="assets/characters/player.svg" alt="P1" id="player-sprite">
+        <div class="char-aura fire-aura"></div>
+      </div>
+      <div id="enemy-char" class="battle-char enemy-char">
+        <img src="assets/characters/enemy.svg" alt="Enemy" id="enemy-sprite">
+        <div class="char-aura gold-aura"></div>
+      </div>
+
+      <!-- Damage/Effect numbers -->
+      <div id="damage-numbers"></div>
+
+      <!-- Battle effects layer -->
+      <div id="effects-layer"></div>
+
+      <!-- Battle message -->
+      <div id="battle-message" class="battle-message hidden"></div>
+    </div>
+
+    <!-- BOTTOM UI -->
+    <div id="battle-ui">
+
+      <!-- Left: Keyboard hints / battle log -->
+      <div id="battle-log-panel">
+        <div id="battle-log">
+          <div class="log-entry">バトル開始！</div>
+        </div>
+        <div class="key-hints">
+          <span>A - 技</span>
+          <span>S - アイテム</span>
+          <span>D - チェンジ</span>
+          <span>F - 逃げる</span>
+        </div>
+      </div>
+
+      <!-- Center: Command buttons -->
+      <div id="command-menu">
+        <div class="command-label">コマンド</div>
+        <div class="command-buttons">
+          <button class="cmd-btn skill-btn" id="btn-skill" onclick="Game.openMenu('skill')" title="A">
+            <div class="cmd-icon">🔥</div>
+            <div class="cmd-name">技</div>
+          </button>
+          <button class="cmd-btn item-btn" id="btn-item" onclick="Game.openMenu('item')" title="S">
+            <div class="cmd-icon">🎒</div>
+            <div class="cmd-name">アイテム</div>
+          </button>
+          <button class="cmd-btn change-btn" id="btn-change" onclick="Game.openMenu('change')" title="D">
+            <div class="cmd-icon">🔄</div>
+            <div class="cmd-name">チェンジ</div>
+          </button>
+          <button class="cmd-btn run-btn" id="btn-run" onclick="Game.tryRun()" title="F">
+            <div class="cmd-icon">🏃</div>
+            <div class="cmd-name">逃げる</div>
+          </button>
+        </div>
+      </div>
+
+      <!-- Right: Move select panel -->
+      <div id="move-select-panel">
+        <div class="panel-title">ムブセレクトメニュー</div>
+        <div id="move-select-content">
+          <div class="move-select-info">
+            <div class="ms-row"><span class="ms-label">CP</span><span class="ms-val" id="ms-cp">880</span></div>
+            <div class="ms-row"><span class="ms-label">LV</span><span class="ms-val" id="ms-lv">33</span></div>
+            <div class="ms-row"><span class="ms-label">EXP</span><span class="ms-val" id="ms-exp">4100/4500</span></div>
+          </div>
+          <div id="move-list">
+            <!-- Skills populated by JS -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SKILL SUBMENU (overlay) -->
+    <div id="skill-submenu" class="submenu hidden">
+      <div class="submenu-title">技リスト</div>
+      <div id="skill-list"></div>
+      <button class="submenu-back" onclick="Game.closeMenu()">← 戻る</button>
+    </div>
+
+    <!-- ITEM SUBMENU -->
+    <div id="item-submenu" class="submenu hidden">
+      <div class="submenu-title">アイテム</div>
+      <div id="item-list"></div>
+      <button class="submenu-back" onclick="Game.closeMenu()">← 戻る</button>
+    </div>
+
+    <!-- CHANGE SUBMENU -->
+    <div id="change-submenu" class="submenu hidden">
+      <div class="submenu-title">スタンス変更</div>
+      <div id="change-list"></div>
+      <button class="submenu-back" onclick="Game.closeMenu()">← 戻る</button>
+    </div>
+
+    <!-- SKILL DETAIL TOOLTIP -->
+    <div id="skill-tooltip" class="hidden">
+      <div id="tooltip-name"></div>
+      <div id="tooltip-desc"></div>
+      <div id="tooltip-stats"></div>
+    </div>
+
+  </div>
+
+  <!-- VICTORY / DEFEAT SCREEN -->
+  <div id="result-screen" class="screen">
+    <div id="result-content">
+      <div id="result-title"></div>
+      <div id="result-exp"></div>
+      <div id="result-stats"></div>
+      <button onclick="Game.restart()">もう一度</button>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

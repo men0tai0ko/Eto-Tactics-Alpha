@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 300" width="200" height="300">
+  <defs>
+    <radialGradient id="bodyGrad" cx="50%" cy="40%" r="50%">
+      <stop offset="0%" stop-color="#ff6a00"/>
+      <stop offset="100%" stop-color="#8b1a00"/>
+    </radialGradient>
+    <radialGradient id="armorGrad" cx="40%" cy="30%" r="60%">
+      <stop offset="0%" stop-color="#b0b8c8"/>
+      <stop offset="100%" stop-color="#4a5060"/>
+    </radialGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="fireGlow">
+      <feGaussianBlur stdDeviation="5" result="blur"/>
+      <feColorMatrix in="blur" type="matrix" values="1 0.3 0 0 0.2  0.3 0.1 0 0 0  0 0 0 0 0  0 0 0 0.8 0" result="colored"/>
+      <feMerge><feMergeNode in="colored"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <!-- Fire aura -->
+  <ellipse cx="100" cy="260" rx="60" ry="15" fill="#ff4400" opacity="0.3" filter="url(#glow)"/>
+  <!-- Tail -->
+  <path d="M130 200 Q160 240 150 280 Q140 290 135 275 Q145 255 120 220" fill="#ff6a00" filter="url(#fireGlow)"/>
+  <path d="M128 202 Q158 238 148 276" stroke="#ffaa00" stroke-width="3" fill="none"/>
+  <!-- Legs -->
+  <rect x="82" y="220" width="16" height="50" rx="5" fill="url(#armorGrad)"/>
+  <rect x="102" y="220" width="16" height="50" rx="5" fill="url(#armorGrad)"/>
+  <!-- Boots -->
+  <ellipse cx="90" cy="272" rx="12" ry="6" fill="#333"/>
+  <ellipse cx="110" cy="272" rx="12" ry="6" fill="#333"/>
+  <!-- Body armor -->
+  <path d="M70 160 Q100 150 130 160 L135 220 Q100 230 65 220 Z" fill="url(#armorGrad)"/>
+  <!-- Chest plate -->
+  <path d="M80 165 Q100 158 120 165 L122 200 Q100 207 78 200 Z" fill="#6a7a8a"/>
+  <!-- Fire emblem on chest -->
+  <path d="M100 172 L105 185 L100 183 L95 185 Z" fill="#ff6600"/>
+  <!-- Pauldrons -->
+  <ellipse cx="68" cy="165" rx="15" ry="12" fill="url(#armorGrad)"/>
+  <ellipse cx="132" cy="165" rx="15" ry="12" fill="url(#armorGrad)"/>
+  <!-- Left arm (punching forward) -->
+  <path d="M68 165 L40 175 L30 170 L28 175 L42 182 L72 175 Z" fill="url(#armorGrad)"/>
+  <!-- Fist effect -->
+  <circle cx="26" cy="173" r="10" fill="#ff4400" filter="url(#fireGlow)" opacity="0.8"/>
+  <!-- Right arm -->
+  <path d="M132 165 L150 180 L145 188 L130 178 Z" fill="url(#armorGrad)"/>
+  <!-- Neck -->
+  <rect x="92" y="140" width="16" height="20" rx="4" fill="#cc5500"/>
+  <!-- Head - fox ears -->
+  <path d="M78 120 L70 95 L88 110 Z" fill="#cc4400"/>
+  <path d="M122 120 L130 95 L112 110 Z" fill="#cc4400"/>
+  <path d="M79 118 L73 100 L87 111 Z" fill="#ff9966"/>
+  <path d="M121 118 L127 100 L113 111 Z" fill="#ff9966"/>
+  <!-- Head -->
+  <ellipse cx="100" cy="125" rx="28" ry="26" fill="#cc5500"/>
+  <!-- Fox face -->
+  <ellipse cx="100" cy="132" rx="18" ry="14" fill="#ff9966"/>
+  <!-- Eyes - fierce -->
+  <ellipse cx="90" cy="122" rx="7" ry="6" fill="#1a1a2e"/>
+  <ellipse cx="110" cy="122" rx="7" ry="6" fill="#1a1a2e"/>
+  <ellipse cx="91" cy="121" rx="4" ry="4" fill="#ff6600"/>
+  <ellipse cx="111" cy="121" rx="4" ry="4" fill="#ff6600"/>
+  <ellipse cx="92" cy="120" rx="2" ry="2" fill="white"/>
+  <ellipse cx="112" cy="120" rx="2" ry="2" fill="white"/>
+  <!-- Nose -->
+  <ellipse cx="100" cy="133" rx="4" ry="3" fill="#661100"/>
+  <!-- Mouth line -->
+  <path d="M96 136 Q100 140 104 136" stroke="#661100" stroke-width="1.5" fill="none"/>
+  <!-- Whiskers -->
+  <line x1="104" y1="134" x2="125" y2="130" stroke="#ffcc99" stroke-width="1"/>
+  <line x1="104" y1="136" x2="125" y2="136" stroke="#ffcc99" stroke-width="1"/>
+  <line x1="96" y1="134" x2="75" y2="130" stroke="#ffcc99" stroke-width="1"/>
+  <line x1="96" y1="136" x2="75" y2="136" stroke="#ffcc99" stroke-width="1"/>
+  <!-- Mane/hair - spiky red -->
+  <path d="M75 115 Q65 90 72 75 Q80 95 85 100" fill="#cc2200"/>
+  <path d="M85 108 Q80 80 90 65 Q95 88 98 98" fill="#cc2200"/>
+  <path d="M115 108 Q120 80 110 65 Q105 88 102 98" fill="#cc2200"/>
+  <path d="M125 115 Q135 90 128 75 Q120 95 115 100" fill="#cc2200"/>
+  <!-- Fire particles -->
+  <circle cx="35" cy="160" r="4" fill="#ff6600" opacity="0.7" filter="url(#glow)"/>
+  <circle cx="25" cy="155" r="3" fill="#ffaa00" opacity="0.6" filter="url(#glow)"/>
+  <circle cx="45" cy="150" r="2" fill="#ff4400" opacity="0.5"/>
+</svg>

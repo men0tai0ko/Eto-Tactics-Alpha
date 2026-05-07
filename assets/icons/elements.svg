@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 80" width="480" height="80">
+  <!-- Fire 火 -->
+  <circle cx="40" cy="40" r="35" fill="#1a0a00"/>
+  <path d="M40 15 Q48 25 44 32 Q52 22 50 35 Q56 28 54 40 Q58 35 55 45 Q52 55 40 62 Q28 55 25 45 Q22 35 26 40 Q24 28 30 35 Q28 22 36 32 Q32 25 40 15Z" fill="#ff4400"/>
+  <path d="M40 25 Q44 32 42 37 Q46 31 45 38 Q48 34 46 42 Q44 49 40 53 Q36 49 34 42 Q32 34 35 38 Q34 31 38 37 Q36 32 40 25Z" fill="#ffaa00"/>
+  <text x="40" y="75" text-anchor="middle" fill="#ff6600" font-size="9" font-family="serif">火</text>
+
+  <!-- Water 水 -->
+  <circle cx="120" cy="40" r="35" fill="#000a1a"/>
+  <path d="M120 15 Q130 28 132 38 Q134 48 120 58 Q106 48 108 38 Q110 28 120 15Z" fill="#0066ff"/>
+  <path d="M112 30 Q108 42 115 50" stroke="#66aaff" stroke-width="2" fill="none"/>
+  <path d="M128 30 Q132 42 125 50" stroke="#66aaff" stroke-width="2" fill="none"/>
+  <text x="120" y="75" text-anchor="middle" fill="#3399ff" font-size="9" font-family="serif">水</text>
+
+  <!-- Wood 木 -->
+  <circle cx="200" cy="40" r="35" fill="#001a00"/>
+  <line x1="200" y1="15" x2="200" y2="62" stroke="#228822" stroke-width="4"/>
+  <line x1="180" y1="30" x2="220" y2="30" stroke="#228822" stroke-width="3"/>
+  <line x1="185" y1="45" x2="215" y2="45" stroke="#228822" stroke-width="2"/>
+  <path d="M185 30 L175 20 M215 30 L225 20" stroke="#33aa33" stroke-width="2"/>
+  <text x="200" y="75" text-anchor="middle" fill="#33cc33" font-size="9" font-family="serif">木</text>
+
+  <!-- Metal 金 -->
+  <circle cx="280" cy="40" r="35" fill="#1a1500"/>
+  <polygon points="280,16 292,32 288,50 280,54 272,50 268,32" fill="#d4a017"/>
+  <polygon points="280,22 289,34 286,46 280,49 274,46 271,34" fill="#ffe566"/>
+  <text x="280" y="75" text-anchor="middle" fill="#d4a017" font-size="9" font-family="serif">金</text>
+
+  <!-- Earth 土 -->
+  <circle cx="360" cy="40" r="35" fill="#100800"/>
+  <rect x="345" y="43" width="30" height="15" rx="2" fill="#8b5e3c"/>
+  <path d="M350 43 L360 25 L370 43 Z" fill="#a0724a"/>
+  <ellipse cx="360" cy="57" rx="20" ry="5" fill="#6b4423"/>
+  <text x="360" y="75" text-anchor="middle" fill="#c0845a" font-size="9" font-family="serif">土</text>
+
+  <!-- Dark 闇 -->
+  <circle cx="440" cy="40" r="35" fill="#0a000f"/>
+  <path d="M440 15 Q455 25 453 40 Q455 55 440 62 Q425 55 427 40 Q425 25 440 15Z" fill="#6600aa"/>
+  <circle cx="440" cy="38" r="10" fill="#aa00ff" opacity="0.7"/>
+  <path d="M430 30 Q432 22 440 20 Q448 22 450 30" stroke="#cc44ff" stroke-width="1.5" fill="none"/>
+  <text x="440" y="75" text-anchor="middle" fill="#aa44ff" font-size="9" font-family="serif">闇</text>
+</svg>

@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 600" width="1400" height="600">
+  <defs>
+    <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0d0520"/>
+      <stop offset="40%" stop-color="#1a0a3a"/>
+      <stop offset="70%" stop-color="#2d1060"/>
+      <stop offset="100%" stop-color="#1a0530"/>
+    </linearGradient>
+    <linearGradient id="groundGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#2a1a00"/>
+      <stop offset="100%" stop-color="#0d0800"/>
+    </linearGradient>
+    <radialGradient id="moonGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ffe8a0"/>
+      <stop offset="70%" stop-color="#d4a017"/>
+      <stop offset="100%" stop-color="#7a5c00"/>
+    </radialGradient>
+    <filter id="bgGlow">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="softGlow">
+      <feGaussianBlur stdDeviation="3"/>
+    </filter>
+  </defs>
+  <!-- Sky -->
+  <rect width="1400" height="600" fill="url(#skyGrad)"/>
+  <!-- Stars -->
+  <circle cx="100" cy="50" r="1.5" fill="white" opacity="0.8"/>
+  <circle cx="200" cy="80" r="1" fill="white" opacity="0.6"/>
+  <circle cx="350" cy="40" r="2" fill="white" opacity="0.9"/>
+  <circle cx="500" cy="70" r="1.5" fill="white" opacity="0.7"/>
+  <circle cx="650" cy="30" r="1" fill="white" opacity="0.8"/>
+  <circle cx="800" cy="60" r="2" fill="white" opacity="0.6"/>
+  <circle cx="950" cy="45" r="1.5" fill="white" opacity="0.9"/>
+  <circle cx="1100" cy="75" r="1" fill="white" opacity="0.7"/>
+  <circle cx="1250" cy="35" r="2" fill="white" opacity="0.8"/>
+  <circle cx="1350" cy="90" r="1.5" fill="white" opacity="0.6"/>
+  <circle cx="150" cy="120" r="1" fill="white" opacity="0.5"/>
+  <circle cx="420" cy="100" r="1.5" fill="white" opacity="0.7"/>
+  <circle cx="730" cy="110" r="1" fill="white" opacity="0.6"/>
+  <circle cx="1050" cy="95" r="2" fill="white" opacity="0.8"/>
+  <!-- Moon -->
+  <circle cx="1150" cy="100" r="60" fill="url(#moonGrad)" filter="url(#bgGlow)"/>
+  <circle cx="1150" cy="100" r="55" fill="none" stroke="#ffe566" stroke-width="2" opacity="0.5"/>
+  <!-- Moon craters -->
+  <circle cx="1135" cy="90" r="8" fill="#c8900a" opacity="0.5"/>
+  <circle cx="1160" cy="110" r="5" fill="#c8900a" opacity="0.4"/>
+  <!-- Floating islands - left -->
+  <ellipse cx="150" cy="280" rx="120" ry="35" fill="#1a2a1a"/>
+  <rect x="50" y="255" width="200" height="35" rx="10" fill="#2a3a1a"/>
+  <!-- Island vegetation -->
+  <path d="M80 255 L90 230 L100 255 Z" fill="#1a4a1a"/>
+  <path d="M120 255 L130 225 L140 255 Z" fill="#2a5a2a"/>
+  <path d="M160 255 L168 235 L176 255 Z" fill="#1a4a1a"/>
+  <!-- Waterfall from left island -->
+  <path d="M60 285 Q55 320 50 360 Q48 380 52 400" stroke="#4a6aaa" stroke-width="8" fill="none" opacity="0.6"/>
+  <path d="M65 285 Q62 325 58 365 Q56 385 60 405" stroke="#6a8acc" stroke-width="4" fill="none" opacity="0.4"/>
+  <!-- Floating islands - right -->
+  <ellipse cx="1250" cy="260" rx="130" ry="38" fill="#1a2a1a"/>
+  <rect x="1140" y="235" width="220" height="38" rx="10" fill="#2a3a1a"/>
+  <!-- Right island vegetation -->
+  <path d="M1170 235 L1180 208 L1190 235 Z" fill="#1a4a1a"/>
+  <path d="M1210 235 L1222 205 L1232 235 Z" fill="#2a5a2a"/>
+  <path d="M1260 235 L1268 218 L1276 235 Z" fill="#1a4a1a"/>
+  <!-- Waterfall from right island -->
+  <path d="M1340 292 Q1345 330 1348 370 Q1350 390 1346 410" stroke="#4a6aaa" stroke-width="8" fill="none" opacity="0.6"/>
+  <!-- Distant cityscape -->
+  <rect x="400" y="350" width="15" height="120" fill="#0a0818" opacity="0.6"/>
+  <rect x="430" y="330" width="20" height="140" fill="#0a0818" opacity="0.6"/>
+  <rect x="470" y="360" width="12" height="110" fill="#0a0818" opacity="0.6"/>
+  <rect x="880" y="340" width="18" height="130" fill="#0a0818" opacity="0.6"/>
+  <rect x="910" y="355" width="14" height="115" fill="#0a0818" opacity="0.6"/>
+  <rect x="940" y="325" width="22" height="145" fill="#0a0818" opacity="0.6"/>
+  <!-- City lights -->
+  <rect x="402" y="360" width="3" height="3" fill="#ffe566" opacity="0.8"/>
+  <rect x="432" y="345" width="3" height="3" fill="#ff9966" opacity="0.7"/>
+  <rect x="472" y="380" width="3" height="3" fill="#66aaff" opacity="0.8"/>
+  <rect x="882" y="355" width="3" height="3" fill="#ffe566" opacity="0.7"/>
+  <rect x="912" y="370" width="3" height="3" fill="#ff9966" opacity="0.8"/>
+  <rect x="942" y="340" width="3" height="3" fill="#66aaff" opacity="0.7"/>
+  <!-- Ground platform -->
+  <path d="M0 460 Q350 430 700 440 Q1050 430 1400 460 L1400 600 L0 600 Z" fill="url(#groundGrad)"/>
+  <!-- Ground cracks -->
+  <path d="M500 455 L520 470 L510 480 L530 490" stroke="#4a3000" stroke-width="2" fill="none" opacity="0.5"/>
+  <path d="M700 445 L690 465 L710 472 L700 488" stroke="#4a3000" stroke-width="2" fill="none" opacity="0.5"/>
+  <path d="M900 450 L920 460 L905 475 L925 485" stroke="#4a3000" stroke-width="2" fill="none" opacity="0.5"/>
+  <!-- Ground glow -->
+  <ellipse cx="700" cy="455" rx="300" ry="20" fill="#ff4400" opacity="0.08" filter="url(#bgGlow)"/>
+  <!-- Energy lines on ground -->
+  <line x1="400" y1="465" x2="600" y2="458" stroke="#ff6600" stroke-width="1" opacity="0.3"/>
+  <line x1="800" y1="460" x2="1000" y2="467" stroke="#d4a017" stroke-width="1" opacity="0.3"/>
+  <!-- Atmospheric haze -->
+  <rect x="0" y="400" width="1400" height="60" fill="#1a0530" opacity="0.3"/>
+</svg>

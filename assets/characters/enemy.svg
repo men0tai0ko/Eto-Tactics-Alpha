@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 300" width="200" height="300">
+  <defs>
+    <radialGradient id="goldGrad" cx="40%" cy="30%" r="60%">
+      <stop offset="0%" stop-color="#ffe566"/>
+      <stop offset="50%" stop-color="#d4a017"/>
+      <stop offset="100%" stop-color="#7a5c00"/>
+    </radialGradient>
+    <radialGradient id="auraGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ffe566" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#d4a017" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="goldGlow">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feColorMatrix in="blur" type="matrix" values="1 0.5 0 0 0.1  0.8 0.8 0 0 0.05  0 0 0 0 0  0 0 0 0.9 0" result="colored"/>
+      <feMerge><feMergeNode in="colored"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <!-- Golden aura ring -->
+  <circle cx="100" cy="155" r="90" fill="none" stroke="#d4a017" stroke-width="3" opacity="0.4" filter="url(#goldGlow)"/>
+  <circle cx="100" cy="155" r="75" fill="none" stroke="#ffe566" stroke-width="1" opacity="0.3"/>
+  <!-- Ground shadow -->
+  <ellipse cx="100" cy="272" rx="55" ry="12" fill="#7a5c00" opacity="0.4"/>
+  <!-- Legs - armored -->
+  <path d="M80 220 L78 270 L90 270 L95 220 Z" fill="url(#goldGrad)"/>
+  <path d="M120 220 L122 270 L110 270 L105 220 Z" fill="url(#goldGrad)"/>
+  <!-- Boot plates -->
+  <path d="M75 258 L92 258 L90 272 L77 272 Z" fill="#d4a017"/>
+  <path d="M108 258 L125 258 L123 272 L110 272 Z" fill="#d4a017"/>
+  <!-- Body - grand armor -->
+  <path d="M68 155 Q100 145 132 155 L130 225 Q100 232 70 225 Z" fill="url(#goldGrad)" filter="url(#goldGlow)"/>
+  <!-- Chest detail -->
+  <path d="M80 160 Q100 154 120 160 L118 200 Q100 206 82 200 Z" fill="#b8860b"/>
+  <!-- Star emblem -->
+  <polygon points="100,162 103,172 113,172 105,178 108,188 100,182 92,188 95,178 87,172 97,172" fill="#ffe566"/>
+  <!-- Waist belt -->
+  <rect x="70" y="215" width="60" height="10" rx="3" fill="#b8860b"/>
+  <!-- Pauldrons - large spiky -->
+  <path d="M55 155 L40 140 L50 160 L42 165 L55 168 L68 158 Z" fill="url(#goldGrad)" filter="url(#goldGlow)"/>
+  <path d="M145 155 L160 140 L150 160 L158 165 L145 168 L132 158 Z" fill="url(#goldGrad)" filter="url(#goldGlow)"/>
+  <!-- Arms -->
+  <path d="M68 158 L52 175 L48 185 L58 188 L65 178 L72 168 Z" fill="url(#goldGrad)"/>
+  <path d="M132 158 L148 175 L152 185 L142 188 L135 178 L128 168 Z" fill="url(#goldGrad)"/>
+  <!-- Gauntlets -->
+  <ellipse cx="53" cy="190" rx="10" ry="12" fill="#d4a017" filter="url(#goldGlow)"/>
+  <ellipse cx="147" cy="190" rx="10" ry="12" fill="#d4a017" filter="url(#goldGlow)"/>
+  <!-- Energy ball in right hand -->
+  <circle cx="147" cy="190" r="18" fill="none" stroke="#ffe566" stroke-width="2" opacity="0.6" filter="url(#goldGlow)"/>
+  <circle cx="147" cy="190" r="12" fill="#ffe566" opacity="0.4" filter="url(#goldGlow)"/>
+  <!-- Neck -->
+  <rect x="90" y="140" width="20" height="18" rx="4" fill="url(#goldGrad)"/>
+  <!-- Helmet base -->
+  <path d="M68 130 Q100 118 132 130 L130 155 Q100 160 70 155 Z" fill="url(#goldGrad)" filter="url(#goldGlow)"/>
+  <!-- Helmet crest - horns -->
+  <path d="M78 128 L68 100 L80 115 L85 108 L82 128 Z" fill="#d4a017"/>
+  <path d="M122 128 L132 100 L120 115 L115 108 L118 128 Z" fill="#d4a017"/>
+  <!-- Visor -->
+  <path d="M74 135 L126 135 L124 148 Q100 152 76 148 Z" fill="#1a1208"/>
+  <!-- Eye slits glow -->
+  <path d="M82 139 L94 139 L94 144 L82 144 Z" fill="#ffe566" opacity="0.9" filter="url(#goldGlow)"/>
+  <path d="M106 139 L118 139 L118 144 L106 144 Z" fill="#ffe566" opacity="0.9" filter="url(#goldGlow)"/>
+  <!-- Helmet top ornament -->
+  <path d="M90 118 L100 100 L110 118 L105 118 L100 108 L95 118 Z" fill="#ffe566" filter="url(#goldGlow)"/>
+  <!-- Golden particles -->
+  <circle cx="160" cy="170" r="3" fill="#ffe566" opacity="0.7" filter="url(#goldGlow)"/>
+  <circle cx="170" cy="155" r="2" fill="#d4a017" opacity="0.6"/>
+  <circle cx="155" cy="145" r="4" fill="#ffe566" opacity="0.5" filter="url(#goldGlow)"/>
+</svg>
