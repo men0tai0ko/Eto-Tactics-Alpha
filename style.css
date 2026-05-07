@@ -386,6 +386,175 @@ html, body {
   transform: rotate(-15deg) translateY(20px) !important;
 }
 
+/* Stop float on dead character wrapper */
+.battle-char.char-dead-state {
+  animation: none !important;
+}
+
+/* Stun flash on character sprite */
+.char-stunned {
+  animation: stunnedFlash 0.55s ease-in-out;
+}
+@keyframes stunnedFlash {
+  0%, 100% { filter: drop-shadow(0 8px 20px rgba(0,0,0,0.8)) brightness(1); }
+  30%, 70% { filter: drop-shadow(0 0 24px #ffff00) brightness(1.8) saturate(0.2); }
+}
+
+/* ===== BATTLE SCENE ANIMATIONS ===== */
+
+/* Idle float — suppressed while attack animations run */
+@keyframes charFloat {
+  from { transform: translateY(0px); }
+  to   { transform: translateY(-10px); }
+}
+.battle-char:not(.char-attack-left):not(.char-attack-right) {
+  animation: charFloat 3s ease-in-out infinite alternate;
+}
+
+/* Aura wrapper — centered behind character, pointer-events off */
+.aura-wrap {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: clamp(170px, 24vw, 310px);
+  height: clamp(170px, 24vw, 310px);
+  pointer-events: none;
+  z-index: 0;
+}
+/* Ensure character sprite renders above its aura */
+.battle-char img {
+  position: relative;
+  z-index: 2;
+}
+
+/* --- PLAYER: rotating star (hexagram) aura --- */
+.star-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%; height: 100%;
+  overflow: visible;
+}
+.star-svg-1 { animation: starSpin1 5s linear infinite; }
+.star-svg-2 { animation: starSpin2 8s linear infinite; opacity: 0.45; }
+@keyframes starSpin1 { to { transform: rotate(360deg); } }
+@keyframes starSpin2 { to { transform: rotate(-360deg); } }
+
+.star-tri {
+  fill: none;
+  stroke: #ff4400;
+  stroke-width: 10;
+  filter: drop-shadow(0 0 8px #ff8800);
+  opacity: 0.85;
+}
+.star-tri-dim {
+  stroke: #ff7744;
+  stroke-width: 7;
+  opacity: 0.45;
+  filter: drop-shadow(0 0 5px #ff4400);
+}
+
+/* Player center glow */
+.player-core-glow {
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 55%; height: 55%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,110,0,0.28), rgba(255,68,0,0.1), transparent);
+  animation: coreGlowFire 2s ease-in-out infinite alternate;
+  transform-origin: center;
+}
+@keyframes coreGlowFire {
+  from { transform: translate(-50%,-50%) scale(0.85); opacity: 0.55; }
+  to   { transform: translate(-50%,-50%) scale(1.2);  opacity: 1; }
+}
+
+/* Player aura flash on attack */
+.player-aura-wrap.aura-flash .star-tri {
+  stroke: #ffffff;
+  filter: drop-shadow(0 0 22px #ffcc00);
+  opacity: 1;
+  transition: stroke 0.1s, filter 0.1s;
+}
+
+/* --- ENEMY: concentric gold ring aura --- */
+.gold-ring {
+  position: absolute;
+  top: 50%; left: 50%;
+  border-radius: 50%;
+  border: 3px solid rgba(212,160,23,0.7);
+  box-shadow: 0 0 14px rgba(212,160,23,0.35), inset 0 0 10px rgba(212,160,23,0.1);
+  transform: translate(-50%,-50%);
+}
+.gold-ring-1 {
+  width: 52%; height: 52%;
+  animation: goldRingPulse 2s ease-in-out infinite;
+}
+.gold-ring-2 {
+  width: 74%; height: 74%;
+  border-width: 2px;
+  border-color: rgba(212,160,23,0.5);
+  animation: goldRingPulse 2s ease-in-out 0.45s infinite;
+}
+.gold-ring-3 {
+  width: 96%; height: 96%;
+  border-width: 2px;
+  border-color: rgba(212,160,23,0.28);
+  animation: goldRingPulse 2s ease-in-out 0.9s infinite;
+}
+@keyframes goldRingPulse {
+  0%   { transform: translate(-50%,-50%) scale(0.93); opacity: 0.35; }
+  50%  { transform: translate(-50%,-50%) scale(1.07); opacity: 1; }
+  100% { transform: translate(-50%,-50%) scale(0.93); opacity: 0.35; }
+}
+
+/* Enemy center glow */
+.gold-core-glow {
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 48%; height: 48%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,228,80,0.22), rgba(212,160,23,0.1), transparent);
+  animation: coreGlowGold 2.4s ease-in-out infinite alternate;
+}
+@keyframes coreGlowGold {
+  from { transform: translate(-50%,-50%) scale(0.88); opacity: 0.45; }
+  to   { transform: translate(-50%,-50%) scale(1.22); opacity: 1; }
+}
+
+/* Enemy aura flash on attack */
+.enemy-aura-wrap.aura-flash .gold-ring {
+  border-color: rgba(255,245,100,0.95);
+  box-shadow: 0 0 28px rgba(255,230,50,0.75), inset 0 0 18px rgba(255,230,50,0.2);
+  transition: border-color 0.1s, box-shadow 0.1s;
+}
+
+/* --- SPARK PARTICLES --- */
+#spark-container {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+}
+.spark {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  animation: sparkFloat var(--dur, 2s) ease-out forwards;
+}
+@keyframes sparkFloat {
+  0%   { transform: translate(0, 0) scale(1);   opacity: 1; }
+  100% { transform: translate(calc(var(--dx, 0) * 1px), calc(var(--dy, 0) * 1px)) scale(0.15); opacity: 0; }
+}
+
+/* Mobile: tighten aura sizes */
+@media (max-width: 600px) {
+  .aura-wrap {
+    width: clamp(110px, 38vw, 190px);
+    height: clamp(110px, 38vw, 190px);
+  }
+}
+
 /* Status effects panels */
 .status-effects {
   position: absolute;
@@ -775,6 +944,10 @@ html, body {
 .defeat #result-title {
   color: #cc2222;
   text-shadow: 0 0 30px #cc0000;
+}
+.run #result-title {
+  color: #88aaff;
+  text-shadow: 0 0 20px #4466cc, 0 0 40px rgba(68,102,204,0.4);
 }
 #result-exp { font-size: 18px; color: var(--purple-light); }
 #result-stats { font-size: 14px; color: var(--text-dim); }

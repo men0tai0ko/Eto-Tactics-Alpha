@@ -324,13 +324,12 @@ class BattleEngine {
 
     attacker.pp -= skill.ppCost;
 
-    const hitChance = attacker.hasStatus('bind') ? 0.75 : 1.0;
-    if (Math.random() > hitChance) {
-      result.events.push({ type: 'miss' });
-      return result;
-    }
-
     if (skill.type === 'attack') {
+      const hitChance = attacker.hasStatus('bind') ? 0.75 : 1.0;
+      if (Math.random() > hitChance) {
+        result.events.push({ type: 'miss' });
+        return result;
+      }
       const { dmg, isCrit, elemMul } = this.calcDamage(attacker, defender, skill);
       const actualDmg = defender.takeDamage(dmg);
       result.events.push({ type: 'damage', amount: actualDmg, isCrit, elemMul });
@@ -341,8 +340,11 @@ class BattleEngine {
       }
       if (skill.selfStatus) {
         if (skill.selfStatus === 'dan_up') {
+          const prevDan = attacker.dan;
           attacker.dan = Math.min(5, attacker.dan + 1);
-          result.events.push({ type: 'dan_up', newDan: attacker.dan });
+          if (attacker.dan > prevDan) {
+            result.events.push({ type: 'dan_up', newDan: attacker.dan });
+          }
         } else {
           attacker.applyStatus(skill.selfStatus, 4);
           result.events.push({ type: 'status_applied', status: skill.selfStatus, target: 'attacker' });
@@ -353,6 +355,10 @@ class BattleEngine {
       const healAmt  = Math.floor((skill.healAmt ?? 60) * danBonus);
       const actual   = attacker.heal(healAmt);
       result.events.push({ type: 'heal', amount: actual });
+      if (skill.selfStatus) {
+        attacker.applyStatus(skill.selfStatus, 4);
+        result.events.push({ type: 'status_applied', status: skill.selfStatus, target: 'attacker' });
+      }
     } else if (skill.type === 'buff') {
       if (skill.selfStatus === 'shield') {
         attacker.shields = Math.floor(attacker.def * 1.5);
@@ -461,6 +467,7 @@ const Game = (() => {
     updateTimeline();
     updateMovePanel();
     populateMoveList();
+    startParticles();
     addLog('バトル開始！P1 vs CP！', 'system');
     addLog('P1のターン。コマンドを選んでください。', 'system');
 
@@ -472,6 +479,7 @@ const Game = (() => {
   }
 
   function restart() {
+    stopParticles();
     document.removeEventListener('keydown', handleKey);
     showScreen('title-screen');
   }
@@ -824,6 +832,7 @@ const Game = (() => {
       addLog('P1は逃げ出した！', 'system');
       showBattleMessage('逃げた！');
       battleOver = true;
+      stopParticles();
       await wait(1500);
       showResult(null);
     } else {
@@ -839,7 +848,6 @@ const Game = (() => {
 
   async function enemyTurn() {
     isPlayerTurn = false;
-    addLog('', 'system');
 
     // Tick status effects
     const pExpired = player.tickStatus();
@@ -916,13 +924,18 @@ const Game = (() => {
         addLog(`シールド (${ev.amount}) を張った！`, onPlayer ? 'player-act' : 'enemy-act');
       } else if (ev.type === 'status_applied') {
         const label = STATUS_LABELS[ev.status] ?? ev.status;
-        addLog(`${label} 状態になった！`, 'system');
+        const isP1 = (actorSide === 'player') === (ev.target === 'attacker');
+        addLog(`${isP1 ? 'P1' : 'CP'}は${label}状態になった！`, 'system');
       } else if (ev.type === 'dan_up') {
         addLog(`段数が ${ev.newDan} に上昇！`, 'system');
         showBattleMessage(`段数 UP！ 第${ev.newDan}段`);
         await wait(500);
       } else if (ev.type === 'stunned') {
         addLog('スタンで行動できない！', 'system');
+        const stunSpriteId = onPlayer ? 'player-sprite' : 'enemy-sprite';
+        const stunEl = document.getElementById(stunSpriteId);
+        stunEl.classList.add('char-stunned');
+        setTimeout(() => stunEl.classList.remove('char-stunned'), 560);
       } else if (ev.type === 'miss') {
         showDamageNumber(0, 'miss', !onPlayer);
         addLog('ミス！攻撃が当たらなかった！', 'system');
@@ -936,6 +949,7 @@ const Game = (() => {
   function checkBattleEnd() {
     if (!enemy.isAlive) {
       battleOver = true; // [Fix2] Set before async to block any pending re-enable
+      stopParticles();
       enableCommands(false);
       setTimeout(() => {
         const leveled = player.gainExp(300);
@@ -947,8 +961,10 @@ const Game = (() => {
     }
     if (!player.isAlive) {
       battleOver = true;
+      stopParticles();
       const sprite = document.getElementById('player-sprite');
       sprite.classList.add('char-dead');
+      document.getElementById('player-char').classList.add('char-dead-state');
       enableCommands(false);
       setTimeout(() => {
         addLog('P1は倒れた…', 'system');
@@ -977,13 +993,68 @@ const Game = (() => {
       expEl.textContent = '次はもっと上手くやれる…';
       stats.textContent = '';
     } else {
-      screen.className = 'screen';
+      screen.className = 'screen run';
       title.textContent = '逃走';
-      expEl.textContent = '';
+      expEl.textContent = '戦いを避けた…';
       stats.textContent = '';
     }
 
     showScreen('result-screen');
+  }
+
+  // ---- PARTICLE SYSTEM ----
+  let sparkInterval = null;
+
+  function startParticles() {
+    if (sparkInterval) return;
+    sparkInterval = setInterval(spawnSpark, 280);
+  }
+
+  function stopParticles() {
+    if (sparkInterval) { clearInterval(sparkInterval); sparkInterval = null; }
+    const c = document.getElementById('spark-container');
+    if (c) c.innerHTML = '';
+  }
+
+  function spawnSpark() {
+    const container = document.getElementById('spark-container');
+    if (!container) return;
+    const isFireSpark = Math.random() < 0.55;
+    const spark = document.createElement('div');
+    spark.className = 'spark';
+    const startX = 18 + Math.random() * 64;
+    const startY = 20 + Math.random() * 40;
+    const dx = (Math.random() - 0.5) * 130;
+    const dy = -(35 + Math.random() * 90);
+    const dur = (1.1 + Math.random() * 1.6).toFixed(2);
+    const hue  = isFireSpark ? 15 + Math.random() * 20 : 45 + Math.random() * 12;
+    const lum  = 55 + Math.random() * 22;
+    const color = `hsl(${hue},100%,${lum}%)`;
+    const size  = 3 + Math.random() * 3;
+    spark.style.cssText = [
+      `left:${startX}%`, `top:${startY}%`,
+      `width:${size}px`, `height:${size}px`,
+      `background:${color}`,
+      `box-shadow:0 0 6px ${color}`,
+      `--dx:${dx}`, `--dy:${dy}`,
+      `--dur:${dur}s`,
+    ].join(';');
+    container.appendChild(spark);
+    setTimeout(() => spark.remove(), parseFloat(dur) * 1000 + 100);
+  }
+
+  function flashPlayerAura() {
+    const wrap = document.querySelector('.player-aura-wrap');
+    if (!wrap) return;
+    wrap.classList.add('aura-flash');
+    setTimeout(() => wrap.classList.remove('aura-flash'), 420);
+  }
+
+  function flashEnemyAura() {
+    const wrap = document.querySelector('.enemy-aura-wrap');
+    if (!wrap) return;
+    wrap.classList.add('aura-flash');
+    setTimeout(() => wrap.classList.remove('aura-flash'), 420);
   }
 
   // ---- EFFECTS ----
@@ -992,6 +1063,7 @@ const Game = (() => {
     el.classList.remove('char-attack-left', 'char-attack-right');
     void el.offsetWidth;
     el.classList.add(who === 'player' ? 'char-attack-left' : 'char-attack-right');
+    if (who === 'player') flashPlayerAura(); else flashEnemyAura();
     setTimeout(() => el.classList.remove('char-attack-left', 'char-attack-right'), 500);
   }
 
