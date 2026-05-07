@@ -64,7 +64,7 @@
             </div>
             <span class="bar-val" id="p-pp-val">40/50</span>
           </div>
-          <div class="bar-row">
+          <div class="bar-row hud-exp-row">
             <span class="bar-label">EXP</span>
             <div class="bar-bg">
               <div class="bar-fill exp-bar" id="p-exp-bar" style="width:55%"></div>
@@ -166,6 +166,8 @@
 
       <!-- Center: Command buttons -->
       <div id="command-menu">
+        <!-- [Fix9] Mobile log toggle button -->
+        <button id="log-toggle-btn" class="log-toggle-btn" onclick="Game.toggleLog()" aria-label="バトルログ">📜 ログ</button>
         <div class="command-label">コマンド</div>
         <div class="command-buttons">
           <button class="cmd-btn skill-btn" id="btn-skill" onclick="Game.openMenu('skill')" title="A">

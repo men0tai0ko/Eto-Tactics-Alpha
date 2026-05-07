@@ -315,12 +315,14 @@ class BattleEngine {
       result.events.push({ type: 'no_pp' });
       return result;
     }
-    attacker.pp -= skill.ppCost;
 
+    // [Fix1] Check stun BEFORE deducting PP so stunned turns don't waste resources
     if (attacker.hasStatus('stun')) {
       result.events.push({ type: 'stunned' });
       return result;
     }
+
+    attacker.pp -= skill.ppCost;
 
     const hitChance = attacker.hasStatus('bind') ? 0.75 : 1.0;
     if (Math.random() > hitChance) {
@@ -424,6 +426,7 @@ const Game = (() => {
   let player, enemy, battle;
   let isPlayerTurn = true;
   let busy = false;
+  let battleOver = false; // [Fix2/10] Prevents commands re-enabling after battle ends
   let currentMenu = null;
 
   // ---- INIT ----
@@ -451,6 +454,7 @@ const Game = (() => {
     });
 
     battle = new BattleEngine(player, enemy);
+    battleOver = false;
 
     showScreen('battle-screen');
     renderAll();
@@ -551,7 +555,9 @@ const Game = (() => {
     battle.buildTimeline();
     const track = document.getElementById('timeline-track');
     track.innerHTML = '';
-    battle.timeline.forEach((entry, i) => {
+    // [Fix8] Limit tokens to 4 on narrow screens to prevent overflow
+    const maxTokens = window.innerWidth < 600 ? 4 : 6;
+    battle.timeline.slice(0, maxTokens).forEach((entry, i) => {
       if (i > 0) {
         const arrow = document.createElement('span');
         arrow.className = 'tl-arrow';
@@ -580,11 +586,12 @@ const Game = (() => {
       const canUse = player.pp >= skill.ppCost;
       const item = document.createElement('div');
       item.className = 'move-item';
+      // [Fix3] Show per-skill PP cost, not total remaining PP
       item.innerHTML = `
         <span class="move-icon">${skill.icon}</span>
         <span class="move-name">${skill.name}</span>
         ${skill.power > 0 ? `<span class="move-pow">威力:${skill.power}</span>` : ''}
-        <span class="move-pp">PP:${player.pp}/${player.maxPp}</span>
+        <span class="move-pp">コスト:${skill.ppCost}</span>
       `;
       if (!canUse) item.style.opacity = '0.45';
       item.addEventListener('click', () => {
@@ -643,8 +650,11 @@ const Game = (() => {
       el.addEventListener('click', () => {
         if (canUse) { closeMenu(); executePlayerSkill(skill); }
       });
+      // [Fix6] Support both hover (desktop) and tap (mobile) for tooltip
       el.addEventListener('mouseenter', () => showTooltip(skill));
       el.addEventListener('mouseleave', hideTooltip);
+      el.addEventListener('touchstart', (e) => { e.preventDefault(); showTooltip(skill); }, { passive: false });
+      el.addEventListener('touchend', () => setTimeout(hideTooltip, 1800));
       list.appendChild(el);
     });
   }
@@ -729,9 +739,12 @@ const Game = (() => {
       await enemyTurn();
     }
 
-    busy = false;
-    isPlayerTurn = true;
-    enableCommands(true);
+    // [Fix2] Only re-enable controls if battle is still ongoing
+    if (!battleOver) {
+      busy = false;
+      isPlayerTurn = true;
+      enableCommands(true);
+    }
   }
 
   async function executePlayerItem(item) {
@@ -768,9 +781,11 @@ const Game = (() => {
       await enemyTurn();
     }
 
-    busy = false;
-    isPlayerTurn = true;
-    enableCommands(true);
+    if (!battleOver) {
+      busy = false;
+      isPlayerTurn = true;
+      enableCommands(true);
+    }
   }
 
   async function executePlayerChange(stanceId) {
@@ -791,9 +806,12 @@ const Game = (() => {
       await enemyTurn();
     }
 
-    busy = false;
-    isPlayerTurn = true;
-    enableCommands(true);
+    // [Fix10] Guard against re-enabling after stance change ends battle
+    if (!battleOver) {
+      busy = false;
+      isPlayerTurn = true;
+      enableCommands(true);
+    }
   }
 
   async function tryRun() {
@@ -805,6 +823,7 @@ const Game = (() => {
     if (Math.random() < runChance) {
       addLog('P1は逃げ出した！', 'system');
       showBattleMessage('逃げた！');
+      battleOver = true;
       await wait(1500);
       showResult(null);
     } else {
@@ -916,24 +935,26 @@ const Game = (() => {
   // ---- BATTLE END ----
   function checkBattleEnd() {
     if (!enemy.isAlive) {
+      battleOver = true; // [Fix2] Set before async to block any pending re-enable
+      enableCommands(false);
       setTimeout(() => {
         const leveled = player.gainExp(300);
         addLog('CPを倒した！', 'system');
         showBattleMessage('勝利！！');
         setTimeout(() => showResult('victory', leveled), 1500);
       }, 500);
-      enableCommands(false);
       return true;
     }
     if (!player.isAlive) {
+      battleOver = true;
       const sprite = document.getElementById('player-sprite');
       sprite.classList.add('char-dead');
+      enableCommands(false);
       setTimeout(() => {
         addLog('P1は倒れた…', 'system');
         showBattleMessage('敗北…');
         setTimeout(() => showResult('defeat'), 1500);
       }, 500);
-      enableCommands(false);
       return true;
     }
     return false;
@@ -1064,5 +1085,11 @@ const Game = (() => {
     }
   }
 
-  return { startBattle, restart, openMenu, closeMenu, tryRun };
+  // [Fix9] Mobile log overlay toggle
+  function toggleLog() {
+    const panel = document.getElementById('battle-log-panel');
+    panel.classList.toggle('log-visible');
+  }
+
+  return { startBattle, restart, openMenu, closeMenu, tryRun, toggleLog };
 })();

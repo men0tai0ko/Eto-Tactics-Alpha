@@ -815,3 +815,187 @@ button:focus-visible {
   outline: 2px solid var(--gold);
   outline-offset: 2px;
 }
+
+/* ===== LOG TOGGLE BUTTON (mobile only) ===== */
+.log-toggle-btn {
+  display: none; /* hidden on desktop */
+}
+
+/* ===== MOBILE RESPONSIVE (Fix4,5,7,8,9) ===== */
+@media (max-width: 600px) {
+
+  /* --- HUD compact (Fix7) --- */
+  #hud-top {
+    min-height: 72px;
+    padding: 4px 6px;
+    gap: 4px;
+  }
+  .hud-portrait {
+    width: 46px; height: 46px;
+  }
+  .hud-name { font-size: 12px; }
+  .hud-lv { font-size: 10px; }
+  .bar-row { margin-bottom: 1px; }
+  .bar-bg { height: 6px; }
+  .bar-val { font-size: 9px; min-width: 44px; }
+  .bar-label { font-size: 8px; width: 16px; }
+  /* Hide EXP bar on mobile to save space */
+  .hud-exp-row { display: none; }
+  .cp-row { margin-top: 1px; }
+  .cp-val { font-size: 11px; }
+  .dan-label { font-size: 8px; }
+
+  /* --- Timeline compact (Fix8) --- */
+  #turn-timeline {
+    min-width: 130px;
+    padding: 2px 6px;
+    gap: 3px;
+  }
+  .tl-token { width: 28px; height: 28px; }
+  .tl-arrow { font-size: 9px; }
+  .timeline-label { font-size: 9px; }
+
+  /* --- Battle field: give more height --- */
+  #battle-field { min-height: 160px; }
+  .battle-char img { width: clamp(90px, 22vw, 150px); }
+
+  /* --- Bottom UI: single column (Fix4) --- */
+  #battle-ui {
+    flex-direction: column;
+    min-height: auto;
+    max-height: none;
+    gap: 0;
+    position: relative;
+  }
+
+  /* --- Battle log: hidden by default, overlay on toggle (Fix4) --- */
+  #battle-log-panel {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    z-index: 200;
+    background: rgba(4,2,12,0.97);
+    border-top: 2px solid var(--gold);
+    max-height: 55vh;
+    padding: 8px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    transform: translateY(110%);
+    transition: transform 0.3s ease;
+    min-width: unset;
+    max-width: unset;
+    border-right: none;
+  }
+  /* Visible state */
+  #battle-log-panel.log-visible {
+    transform: translateY(0);
+  }
+  #battle-log { font-size: 12px; flex: 1; max-height: 40vh; }
+
+  /* --- Key hints: hidden on mobile (Fix7) --- */
+  .key-hints { display: none; }
+
+  /* --- Log toggle button: visible on mobile (Fix9) --- */
+  .log-toggle-btn {
+    display: block;
+    position: absolute;
+    top: -32px;
+    right: 8px;
+    background: rgba(4,2,12,0.9);
+    border: 1px solid var(--panel-border);
+    border-radius: 4px 4px 0 0;
+    color: var(--text-dim);
+    font-size: 11px;
+    font-family: var(--font-jp);
+    padding: 4px 10px;
+    cursor: pointer;
+    z-index: 201;
+  }
+
+  /* --- Command area: full width, centered --- */
+  #command-menu {
+    padding: 8px 10px;
+    flex: none;
+    width: 100%;
+    position: relative;
+  }
+  .command-buttons {
+    gap: 8px;
+    justify-content: center;
+  }
+  /* Larger touch targets (Fix5) */
+  .cmd-btn {
+    width: 68px; height: 68px;
+    touch-action: manipulation;
+  }
+  .cmd-icon { font-size: 24px; }
+  .cmd-name { font-size: 11px; }
+
+  /* --- Move select panel: hidden on mobile (in submenu instead) --- */
+  #move-select-panel { display: none; }
+
+  /* --- Submenus: full-screen overlay (Fix5) --- */
+  .submenu {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    top: auto;
+    max-height: 72vh;
+    z-index: 150;
+    padding: 12px 12px 16px;
+    border-radius: 16px 16px 0 0;
+  }
+  .submenu-title { font-size: 14px; padding-bottom: 8px; }
+  .submenu-back {
+    width: 100%;
+    padding: 10px;
+    font-size: 13px;
+    text-align: center;
+    margin-top: 4px;
+  }
+  /* Larger touch targets in submenus (Fix5) */
+  .skill-entry, .item-entry, .change-entry {
+    padding: 11px 12px;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .entry-name { font-size: 14px; }
+  .entry-desc { font-size: 11px; }
+  #skill-list, #item-list, #change-list {
+    max-height: calc(72vh - 120px);
+    gap: 6px;
+  }
+
+  /* --- Tooltip on mobile: positioned at top of screen --- */
+  #skill-tooltip {
+    position: fixed;
+    bottom: auto;
+    top: 80px;
+    left: 10px; right: 10px;
+    transform: none;
+    font-size: 13px;
+    padding: 12px 16px;
+  }
+
+  /* --- Status effects smaller --- */
+  .status-badge { font-size: 9px; padding: 1px 5px; }
+
+  /* --- Battle message larger --- */
+  .battle-message { font-size: 18px; padding: 12px 24px; white-space: normal; text-align: center; }
+
+  /* --- Damage numbers adjusted --- */
+  .dmg-num { font-size: 22px; }
+  .dmg-num.critical { font-size: 28px; }
+
+  /* --- Result screen --- */
+  #result-title { font-size: 36px; }
+  #result-exp { font-size: 16px; }
+}
+
+/* Very small screens (375px and below) */
+@media (max-width: 375px) {
+  .cmd-btn { width: 58px; height: 58px; }
+  .cmd-icon { font-size: 20px; }
+  .hud-portrait { width: 38px; height: 38px; }
+  #turn-timeline { min-width: 110px; }
+  .tl-token { width: 24px; height: 24px; }
+}
