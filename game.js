@@ -324,13 +324,12 @@ class BattleEngine {
 
     attacker.pp -= skill.ppCost;
 
-    const hitChance = attacker.hasStatus('bind') ? 0.75 : 1.0;
-    if (Math.random() > hitChance) {
-      result.events.push({ type: 'miss' });
-      return result;
-    }
-
     if (skill.type === 'attack') {
+      const hitChance = attacker.hasStatus('bind') ? 0.75 : 1.0;
+      if (Math.random() > hitChance) {
+        result.events.push({ type: 'miss' });
+        return result;
+      }
       const { dmg, isCrit, elemMul } = this.calcDamage(attacker, defender, skill);
       const actualDmg = defender.takeDamage(dmg);
       result.events.push({ type: 'damage', amount: actualDmg, isCrit, elemMul });
@@ -341,8 +340,11 @@ class BattleEngine {
       }
       if (skill.selfStatus) {
         if (skill.selfStatus === 'dan_up') {
+          const prevDan = attacker.dan;
           attacker.dan = Math.min(5, attacker.dan + 1);
-          result.events.push({ type: 'dan_up', newDan: attacker.dan });
+          if (attacker.dan > prevDan) {
+            result.events.push({ type: 'dan_up', newDan: attacker.dan });
+          }
         } else {
           attacker.applyStatus(skill.selfStatus, 4);
           result.events.push({ type: 'status_applied', status: skill.selfStatus, target: 'attacker' });
@@ -353,6 +355,10 @@ class BattleEngine {
       const healAmt  = Math.floor((skill.healAmt ?? 60) * danBonus);
       const actual   = attacker.heal(healAmt);
       result.events.push({ type: 'heal', amount: actual });
+      if (skill.selfStatus) {
+        attacker.applyStatus(skill.selfStatus, 4);
+        result.events.push({ type: 'status_applied', status: skill.selfStatus, target: 'attacker' });
+      }
     } else if (skill.type === 'buff') {
       if (skill.selfStatus === 'shield') {
         attacker.shields = Math.floor(attacker.def * 1.5);
@@ -473,6 +479,7 @@ const Game = (() => {
   }
 
   function restart() {
+    stopParticles();
     document.removeEventListener('keydown', handleKey);
     showScreen('title-screen');
   }
@@ -841,7 +848,6 @@ const Game = (() => {
 
   async function enemyTurn() {
     isPlayerTurn = false;
-    addLog('', 'system');
 
     // Tick status effects
     const pExpired = player.tickStatus();
@@ -918,13 +924,18 @@ const Game = (() => {
         addLog(`シールド (${ev.amount}) を張った！`, onPlayer ? 'player-act' : 'enemy-act');
       } else if (ev.type === 'status_applied') {
         const label = STATUS_LABELS[ev.status] ?? ev.status;
-        addLog(`${label} 状態になった！`, 'system');
+        const isP1 = (actorSide === 'player') === (ev.target === 'attacker');
+        addLog(`${isP1 ? 'P1' : 'CP'}は${label}状態になった！`, 'system');
       } else if (ev.type === 'dan_up') {
         addLog(`段数が ${ev.newDan} に上昇！`, 'system');
         showBattleMessage(`段数 UP！ 第${ev.newDan}段`);
         await wait(500);
       } else if (ev.type === 'stunned') {
         addLog('スタンで行動できない！', 'system');
+        const stunSpriteId = onPlayer ? 'player-sprite' : 'enemy-sprite';
+        const stunEl = document.getElementById(stunSpriteId);
+        stunEl.classList.add('char-stunned');
+        setTimeout(() => stunEl.classList.remove('char-stunned'), 560);
       } else if (ev.type === 'miss') {
         showDamageNumber(0, 'miss', !onPlayer);
         addLog('ミス！攻撃が当たらなかった！', 'system');
@@ -953,6 +964,7 @@ const Game = (() => {
       stopParticles();
       const sprite = document.getElementById('player-sprite');
       sprite.classList.add('char-dead');
+      document.getElementById('player-char').classList.add('char-dead-state');
       enableCommands(false);
       setTimeout(() => {
         addLog('P1は倒れた…', 'system');
@@ -981,9 +993,9 @@ const Game = (() => {
       expEl.textContent = '次はもっと上手くやれる…';
       stats.textContent = '';
     } else {
-      screen.className = 'screen';
+      screen.className = 'screen run';
       title.textContent = '逃走';
-      expEl.textContent = '';
+      expEl.textContent = '戦いを避けた…';
       stats.textContent = '';
     }
 

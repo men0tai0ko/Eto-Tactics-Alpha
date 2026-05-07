@@ -386,6 +386,20 @@ html, body {
   transform: rotate(-15deg) translateY(20px) !important;
 }
 
+/* Stop float on dead character wrapper */
+.battle-char.char-dead-state {
+  animation: none !important;
+}
+
+/* Stun flash on character sprite */
+.char-stunned {
+  animation: stunnedFlash 0.55s ease-in-out;
+}
+@keyframes stunnedFlash {
+  0%, 100% { filter: drop-shadow(0 8px 20px rgba(0,0,0,0.8)) brightness(1); }
+  30%, 70% { filter: drop-shadow(0 0 24px #ffff00) brightness(1.8) saturate(0.2); }
+}
+
 /* ===== BATTLE SCENE ANIMATIONS ===== */
 
 /* Idle float — suppressed while attack animations run */
@@ -400,9 +414,9 @@ html, body {
 /* Aura wrapper — centered behind character, pointer-events off */
 .aura-wrap {
   position: absolute;
-  top: 5%;
+  top: 50%;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translate(-50%, -50%);
   width: clamp(170px, 24vw, 310px);
   height: clamp(170px, 24vw, 310px);
   pointer-events: none;
@@ -930,6 +944,10 @@ html, body {
 .defeat #result-title {
   color: #cc2222;
   text-shadow: 0 0 30px #cc0000;
+}
+.run #result-title {
+  color: #88aaff;
+  text-shadow: 0 0 20px #4466cc, 0 0 40px rgba(68,102,204,0.4);
 }
 #result-exp { font-size: 18px; color: var(--purple-light); }
 #result-stats { font-size: 14px; color: var(--text-dim); }
