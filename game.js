@@ -461,6 +461,7 @@ const Game = (() => {
     updateTimeline();
     updateMovePanel();
     populateMoveList();
+    startParticles();
     addLog('バトル開始！P1 vs CP！', 'system');
     addLog('P1のターン。コマンドを選んでください。', 'system');
 
@@ -824,6 +825,7 @@ const Game = (() => {
       addLog('P1は逃げ出した！', 'system');
       showBattleMessage('逃げた！');
       battleOver = true;
+      stopParticles();
       await wait(1500);
       showResult(null);
     } else {
@@ -936,6 +938,7 @@ const Game = (() => {
   function checkBattleEnd() {
     if (!enemy.isAlive) {
       battleOver = true; // [Fix2] Set before async to block any pending re-enable
+      stopParticles();
       enableCommands(false);
       setTimeout(() => {
         const leveled = player.gainExp(300);
@@ -947,6 +950,7 @@ const Game = (() => {
     }
     if (!player.isAlive) {
       battleOver = true;
+      stopParticles();
       const sprite = document.getElementById('player-sprite');
       sprite.classList.add('char-dead');
       enableCommands(false);
@@ -986,12 +990,68 @@ const Game = (() => {
     showScreen('result-screen');
   }
 
+  // ---- PARTICLE SYSTEM ----
+  let sparkInterval = null;
+
+  function startParticles() {
+    if (sparkInterval) return;
+    sparkInterval = setInterval(spawnSpark, 280);
+  }
+
+  function stopParticles() {
+    if (sparkInterval) { clearInterval(sparkInterval); sparkInterval = null; }
+    const c = document.getElementById('spark-container');
+    if (c) c.innerHTML = '';
+  }
+
+  function spawnSpark() {
+    const container = document.getElementById('spark-container');
+    if (!container) return;
+    const isFireSpark = Math.random() < 0.55;
+    const spark = document.createElement('div');
+    spark.className = 'spark';
+    const startX = 18 + Math.random() * 64;
+    const startY = 20 + Math.random() * 40;
+    const dx = (Math.random() - 0.5) * 130;
+    const dy = -(35 + Math.random() * 90);
+    const dur = (1.1 + Math.random() * 1.6).toFixed(2);
+    const hue  = isFireSpark ? 15 + Math.random() * 20 : 45 + Math.random() * 12;
+    const lum  = 55 + Math.random() * 22;
+    const color = `hsl(${hue},100%,${lum}%)`;
+    const size  = 3 + Math.random() * 3;
+    spark.style.cssText = [
+      `left:${startX}%`, `top:${startY}%`,
+      `width:${size}px`, `height:${size}px`,
+      `background:${color}`,
+      `box-shadow:0 0 6px ${color}`,
+      `--dx:${dx}`, `--dy:${dy}`,
+      `--dur:${dur}s`,
+    ].join(';');
+    container.appendChild(spark);
+    setTimeout(() => spark.remove(), parseFloat(dur) * 1000 + 100);
+  }
+
+  function flashPlayerAura() {
+    const wrap = document.querySelector('.player-aura-wrap');
+    if (!wrap) return;
+    wrap.classList.add('aura-flash');
+    setTimeout(() => wrap.classList.remove('aura-flash'), 420);
+  }
+
+  function flashEnemyAura() {
+    const wrap = document.querySelector('.enemy-aura-wrap');
+    if (!wrap) return;
+    wrap.classList.add('aura-flash');
+    setTimeout(() => wrap.classList.remove('aura-flash'), 420);
+  }
+
   // ---- EFFECTS ----
   function animateCharAttack(who) {
     const el = document.getElementById(who === 'player' ? 'player-char' : 'enemy-char');
     el.classList.remove('char-attack-left', 'char-attack-right');
     void el.offsetWidth;
     el.classList.add(who === 'player' ? 'char-attack-left' : 'char-attack-right');
+    if (who === 'player') flashPlayerAura(); else flashEnemyAura();
     setTimeout(() => el.classList.remove('char-attack-left', 'char-attack-right'), 500);
   }
 

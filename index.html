@@ -130,13 +130,33 @@
 
       <!-- Characters -->
       <div id="player-char" class="battle-char player-char">
+        <div class="aura-wrap player-aura-wrap">
+          <svg class="star-svg star-svg-1" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+            <polygon class="star-tri" points="150,15 268,218 32,218"/>
+            <polygon class="star-tri" points="150,285 268,82 32,82"/>
+          </svg>
+          <svg class="star-svg star-svg-2" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+            <polygon class="star-tri star-tri-dim" points="150,15 268,218 32,218"/>
+            <polygon class="star-tri star-tri-dim" points="150,285 268,82 32,82"/>
+          </svg>
+          <div class="player-core-glow"></div>
+        </div>
         <img src="assets/characters/player.svg" alt="P1" id="player-sprite">
         <div class="char-aura fire-aura"></div>
       </div>
       <div id="enemy-char" class="battle-char enemy-char">
+        <div class="aura-wrap enemy-aura-wrap">
+          <div class="gold-ring gold-ring-1"></div>
+          <div class="gold-ring gold-ring-2"></div>
+          <div class="gold-ring gold-ring-3"></div>
+          <div class="gold-core-glow"></div>
+        </div>
         <img src="assets/characters/enemy.svg" alt="Enemy" id="enemy-sprite">
         <div class="char-aura gold-aura"></div>
       </div>
+
+      <!-- Spark particles -->
+      <div id="spark-container"></div>
 
       <!-- Damage/Effect numbers -->
       <div id="damage-numbers"></div>
