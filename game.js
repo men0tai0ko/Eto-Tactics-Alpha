@@ -468,6 +468,7 @@ const Game = (() => {
     updateMovePanel();
     populateMoveList();
     startParticles();
+    setupLogSwipeDismiss();
     addLog('バトル開始！P1 vs CP！', 'system');
     addLog('P1のターン。コマンドを選んでください。', 'system');
 
@@ -656,13 +657,28 @@ const Game = (() => {
       `;
       if (!canUse) el.style.opacity = '0.45';
       el.addEventListener('click', () => {
-        if (canUse) { closeMenu(); executePlayerSkill(skill); }
+        if (canUse) {
+          closeMenu();
+          executePlayerSkill(skill);
+        } else {
+          // [iOS Fix9] Shake feedback when tapping a skill with insufficient PP
+          el.classList.remove('shake');
+          void el.offsetWidth;
+          el.classList.add('shake');
+          setTimeout(() => el.classList.remove('shake'), 400);
+        }
       });
-      // [Fix6] Support both hover (desktop) and tap (mobile) for tooltip
+      // Desktop tooltip on hover
       el.addEventListener('mouseenter', () => showTooltip(skill));
       el.addEventListener('mouseleave', hideTooltip);
-      el.addEventListener('touchstart', (e) => { e.preventDefault(); showTooltip(skill); }, { passive: false });
-      el.addEventListener('touchend', () => setTimeout(hideTooltip, 1800));
+      // [iOS Fix1/5] Long-press (400ms) for tooltip; instant tap executes skill via click
+      // Never call preventDefault on touchstart — it suppresses the click event on iOS
+      let _tipTimer = null;
+      el.addEventListener('touchstart', () => {
+        _tipTimer = setTimeout(() => showTooltip(skill), 400);
+      }, { passive: true });
+      el.addEventListener('touchmove', () => { clearTimeout(_tipTimer); _tipTimer = null; }, { passive: true });
+      el.addEventListener('touchend', () => { clearTimeout(_tipTimer); _tipTimer = null; setTimeout(hideTooltip, 300); }, { passive: true });
       list.appendChild(el);
     });
   }
@@ -848,6 +864,7 @@ const Game = (() => {
 
   async function enemyTurn() {
     isPlayerTurn = false;
+    showEnemyTurnIndicator();
 
     // Tick status effects
     const pExpired = player.tickStatus();
@@ -1000,6 +1017,31 @@ const Game = (() => {
     }
 
     showScreen('result-screen');
+  }
+
+  // ---- ENEMY TURN INDICATOR ----
+  function showEnemyTurnIndicator() {
+    const field = document.getElementById('battle-field');
+    const el = document.createElement('div');
+    el.className = 'turn-indicator';
+    el.textContent = 'CPの番';
+    field.appendChild(el);
+    setTimeout(() => el.remove(), 1100);
+  }
+
+  // ---- BATTLE LOG SWIPE-DOWN DISMISS ----
+  function setupLogSwipeDismiss() {
+    const panel = document.getElementById('battle-log-panel');
+    let startY = 0;
+    panel.addEventListener('touchstart', (e) => {
+      startY = e.touches[0].clientY;
+    }, { passive: true });
+    panel.addEventListener('touchend', (e) => {
+      const dy = e.changedTouches[0].clientY - startY;
+      if (dy > 55) {
+        panel.classList.remove('log-visible');
+      }
+    }, { passive: true });
   }
 
   // ---- PARTICLE SYSTEM ----
